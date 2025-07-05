@@ -19,3 +19,6 @@ spring:
   docker:
     compose:
       enabled: true
+
+app:
+  upload-path: ./uploads

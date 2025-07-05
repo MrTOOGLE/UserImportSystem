@@ -5,7 +5,9 @@ import ru.shift.userimporter.core.model.Status;
 import ru.shift.userimporter.core.model.UploadedFile;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UploadedFileRepository extends JpaRepository<UploadedFile, Long> {
     List<UploadedFile> findByStatus(Status status);
+    Optional<UploadedFile> findByHash(String hash);
 }

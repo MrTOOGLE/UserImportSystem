@@ -1,0 +1,37 @@
+package ru.shift.userimporter.core.service;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import ru.shift.userimporter.core.model.User;
+import ru.shift.userimporter.core.repository.UserRepository;
+import ru.shift.userimporter.core.repository.UserSpecifications;
+
+@Service
+public class UserService {
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public Page<User> getUsers(String phone, String firstName, String lastName, String email, int limit, int offset) {
+        if (offset % limit != 0 || offset < 0 || limit < 0) {
+            throw new IllegalArgumentException("Offset должен быть кратен limit и оба должны быть больше нуля");
+        }
+
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        Specification<User> specification = UserSpecifications.hasPhone(phone)
+                .and(UserSpecifications.hasFirstName(firstName))
+                .and(UserSpecifications.hasLastName(lastName))
+                .and(UserSpecifications.hasEmail(email));
+
+        return userRepository.findAll(specification, pageable);
+    }
+
+    public User saveOrUpdateUser(User user) {
+        return userRepository.save(user);
+    }
+}
