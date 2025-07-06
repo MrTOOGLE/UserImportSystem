@@ -37,10 +37,10 @@ public class FileProcessingService {
                 rowNumber++;
                 try {
                     User user = parseLineToUser(line);
-                    boolean userExsits = userService.existsByPhone(user.getPhone());
+                    boolean userExists = userService.existsByPhone(user.getPhone());
 
                     userService.saveOrUpdateUser(user);
-                    if (userExsits) {
+                    if (userExists) {
                         updatedCount++;
                     } else {
                         insertedCount++;

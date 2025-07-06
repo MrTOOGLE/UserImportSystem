@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface FileProcessingErrorRepository extends JpaRepository<FileProcessingError, Long> {
     List<FileProcessingError> findByUploadedFileId(Long fileId);
+    Integer countByUploadedFileId(long fileId);
 }
