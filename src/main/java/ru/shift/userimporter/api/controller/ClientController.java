@@ -25,7 +25,7 @@ public class ClientController {
     @GetMapping()
     public ResponseEntity<List<ClientResponse>> getClients(
             @RequestParam(required = false) Long phone,
-            @RequestParam(required = false) String name,     // firstName в API
+            @RequestParam(required = false) String name,
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String email,
             @RequestParam(defaultValue = "100") int limit,

@@ -12,6 +12,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Асинхронно обрабатывает загруженный файл построчно.
+ * Обновляет статус файла и сохраняет статистику обработки.
+ */
 @Service
 public class FileProcessingService {
     private final UserService userService;
@@ -75,7 +79,7 @@ public class FileProcessingService {
     private User parseLineToUser(String line) {
         String[] fields = line.split(",");
 
-        if (fields.length != 6) {  // ДОБАВЬ ПРОВЕРКУ!
+        if (fields.length != 6) {
             throw new IllegalArgumentException("Неверный формат: ожидалось 6 полей");
         }
         User user = new User();

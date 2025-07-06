@@ -3,6 +3,10 @@ package ru.shift.userimporter.core.repository;
 import org.springframework.data.jpa.domain.Specification;
 import ru.shift.userimporter.core.model.User;
 
+/**
+ * Класс для создания JPA Specifications для поиска пользователей.
+ * Используется для построения динамических WHERE условий.
+ */
 public class UserSpecifications {
     public static Specification<User> hasPhone(String phone) {
         return (root, query, criteriaBuilder) -> {
