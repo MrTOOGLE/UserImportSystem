@@ -72,7 +72,7 @@ public class FileService {
             FileResponse fileResponse = new FileResponse();
             FileStatistic fileStatistic = new FileStatistic();
 
-            fileResponse.setFileId(uploadedFile.getId());
+            fileResponse.setFileId(String.valueOf(uploadedFile.getId()));
             fileResponse.setStatus(uploadedFile.getStatus());
 
             fileStatistic.setInsertedLinesCount(uploadedFile.getInsertedRows());
@@ -80,7 +80,7 @@ public class FileService {
             fileStatistic.setErrorProcessedLinesCount(fileProcessingErrorRepository.countByUploadedFileId(uploadedFile.getId()));
 
             fileResponse.setStatistic(fileStatistic);
-            fileResponse.setHashCode(uploadedFile.getHash());
+            fileResponse.setHashCode(Integer.valueOf(uploadedFile.getHash()));
 
             fileResponses.add(fileResponse);
         }

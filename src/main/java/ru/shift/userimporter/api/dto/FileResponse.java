@@ -11,8 +11,8 @@ import ru.shift.userimporter.core.model.Status;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FileResponse {
-    private Long fileId;
+    private String fileId;
     private Status status;
     private FileStatistic statistic;
-    private String hashCode;
+    private Integer hashCode;
 }

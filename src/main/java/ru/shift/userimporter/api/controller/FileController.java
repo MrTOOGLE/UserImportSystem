@@ -41,7 +41,7 @@ public class FileController {
     }
 
     @GetMapping("/{fileId}/statistics")
-    private ResponseEntity<DetailedFileStatistic> getDetailedStatistics(@PathVariable Long fileId) {
+    public ResponseEntity<DetailedFileStatistic> getDetailedStatistics(@PathVariable Long fileId) {
         return ResponseEntity.ok().body(fileService.getDetailedStatistics(fileId));
     }
 }
