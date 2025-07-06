@@ -4,26 +4,32 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
+import ru.shift.userimporter.api.dto.DetailedFileStatistic;
+import ru.shift.userimporter.core.model.FileProcessingError;
 import ru.shift.userimporter.core.model.Status;
 import ru.shift.userimporter.core.model.UploadedFile;
+import ru.shift.userimporter.core.repository.FileProcessingErrorRepository;
 import ru.shift.userimporter.core.repository.UploadedFileRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 public class FileService {
     private final UploadedFileRepository uploadedFileRepository;
     private final FileProcessingService fileProcessingService;
+    private final FileProcessingErrorRepository fileProcessingErrorRepository;
 
     @Value("${app.upload-path}")
     private String uploadPath;
 
-    public FileService(UploadedFileRepository uploadedFileRepository, FileProcessingService fileProcessingService) {
+    public FileService(UploadedFileRepository uploadedFileRepository, FileProcessingService fileProcessingService, FileProcessingErrorRepository fileProcessingErrorRepository) {
         this.uploadedFileRepository = uploadedFileRepository;
         this.fileProcessingService = fileProcessingService;
+        this.fileProcessingErrorRepository = fileProcessingErrorRepository;
     }
 
     public Long uploadFile(MultipartFile file) throws IOException {
@@ -56,7 +62,22 @@ public class FileService {
         return saved.getId();
     }
 
-    public void startProcessing(Long fileId) {
+    public List<UploadedFile> getFileStatistics(Status status) {
+        if (status == null) {
+            return uploadedFileRepository.findAll();
+        } else {
+            return uploadedFileRepository.findByStatus(status);
+        }
+    }
+
+    public DetailedFileStatistic getDetailedStatistics(Long fileId) {
+        UploadedFile uploadedFile = uploadedFileRepository.findById(fileId).orElseThrow(() -> new IllegalArgumentException("Такого файла не существует"));
+        List<FileProcessingError> fileProcessingErrors = fileProcessingErrorRepository.findByUploadedFileId(fileId);
+
+        return new DetailedFileStatistic(uploadedFile.getInsertedRows(), uploadedFile.getUpdatedRows(), fileProcessingErrors);
+    }
+
+    public void startProcessing(Long fileId) throws Exception {
         UploadedFile uploadedFile = uploadedFileRepository.findById(fileId).orElseThrow(() -> new IllegalArgumentException("Файл не найден"));
         if (uploadedFile.getStatus() != Status.NEW) {
             throw new IllegalArgumentException("Файл не новый, уже обрабатывался/обрабатывается");
@@ -75,6 +96,4 @@ public class FileService {
             throw new RuntimeException("Проблема с файлом: " + e.getMessage(), e);
         }
     }
-
-
 }

@@ -34,4 +34,8 @@ public class UserService {
     public User saveOrUpdateUser(User user) {
         return userRepository.save(user);
     }
+
+    public boolean existsByPhone(String phone) {
+        return userRepository.findByPhone(phone).isPresent();
+    }
 }
