@@ -18,10 +18,6 @@ public class UserService {
     }
 
     public Page<User> getUsers(String phone, String firstName, String lastName, String email, int limit, int offset) {
-        if (offset % limit != 0 || offset < 0 || limit < 0) {
-            throw new IllegalArgumentException("Offset должен быть кратен limit и оба должны быть больше нуля");
-        }
-
         Pageable pageable = PageRequest.of(offset / limit, limit);
         Specification<User> specification = UserSpecifications.hasPhone(phone)
                 .and(UserSpecifications.hasFirstName(firstName))

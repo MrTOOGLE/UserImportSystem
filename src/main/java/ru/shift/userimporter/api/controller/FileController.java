@@ -1,11 +1,11 @@
 package ru.shift.userimporter.api.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.shift.userimporter.api.dto.DetailedFileStatistic;
 import ru.shift.userimporter.api.dto.FileResponse;
-import ru.shift.userimporter.api.dto.FileStatistic;
 import ru.shift.userimporter.core.model.Status;
 import ru.shift.userimporter.core.service.FileService;
 
@@ -14,15 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/files")
+@RequestMapping("/api/v1/files")
+@RequiredArgsConstructor
 public class FileController {
     private final FileService fileService;
 
-    public FileController(FileService fileService) {
-        this.fileService = fileService;
-    }
-
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         Long fileId = fileService.uploadFile(file);
         return ResponseEntity.status(201).body(Map.of("fileId", fileId.toString()));

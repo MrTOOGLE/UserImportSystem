@@ -1,12 +1,14 @@
 package ru.shift.userimporter.api.controller;
 
-import org.springframework.data.domain.Page;
+import jakarta.validation.constraints.Min;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.shift.userimporter.api.dto.ClientResponse;
+import ru.shift.userimporter.api.mapper.ClientMapper;
 import ru.shift.userimporter.core.model.User;
 import ru.shift.userimporter.core.service.UserService;
 
@@ -14,38 +16,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/clients")
+@RequestMapping("/api/v1/clients")
+@RequiredArgsConstructor
 public class ClientController {
     private final UserService userService;
+    private final ClientMapper clientMapper;
 
-    public ClientController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @GetMapping()
-    public ResponseEntity<List<ClientResponse>> getClients(
-            @RequestParam(required = false) Long phone,
+    @GetMapping
+    public List<ClientResponse> getClients(
+            @RequestParam(required = false) String phone,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String email,
-            @RequestParam(defaultValue = "100") int limit,
-            @RequestParam(defaultValue = "0") int offset)
+            @RequestParam @Min(1) int limit,
+            @RequestParam @Min(0) int offset)
     {
-        List<User> users = userService.getUsers(phone != null ? phone.toString() : null, name, lastName, email, limit, offset).getContent();
+        if (offset % limit != 0) {
+            throw new IllegalArgumentException("Offset должен быть кратен limit и оба должны быть больше нуля");
+        }
+        List<User> users = userService.getUsers(phone, name, lastName, email, limit, offset).getContent();
         List<ClientResponse> responses = new ArrayList<>();
         for (User user : users) {
-            ClientResponse clientResponse = new ClientResponse();
-            clientResponse.setPhone(Long.valueOf(user.getPhone()));
-            clientResponse.setName(user.getFirstName());
-            clientResponse.setLastName(user.getLastName());
-            clientResponse.setMiddleName(user.getMiddleName());
-            clientResponse.setEmail(user.getEmail());
-            clientResponse.setBirthDate(user.getBirthDate().toString());
-            clientResponse.setCreationTime(user.getCreatedAt().toString());
-            clientResponse.setUpdateTime(user.getUpdatedAt().toString());
-            responses.add(clientResponse);
+            responses.add(clientMapper.userToClientResponse(user));
         }
-        return ResponseEntity.ok(responses);
-
+        return responses;
     }
 }

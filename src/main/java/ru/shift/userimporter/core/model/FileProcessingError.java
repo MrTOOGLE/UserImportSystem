@@ -24,7 +24,6 @@ public class FileProcessingError {
     private int rowNumber;
 
     @Column(name = "error_message", nullable = false)
-    @Lob
     private String errorMessage;
 
     @Column(name = "error_code", nullable = false, length = 30)
@@ -33,6 +32,5 @@ public class FileProcessingError {
     private ErrorCode errorCode;
 
     @Column(name = "raw_data")
-    @Lob
     private String rawData;
 }
