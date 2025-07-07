@@ -32,13 +32,12 @@ public class FileController {
     }
 
     @GetMapping("/statistics")
-    public ResponseEntity<List<FileResponse>> getStatistics(@RequestParam(required = false) Status status) {
-        List<FileResponse> fileResponses = fileService.getFileStatistics(status);
-        return ResponseEntity.ok().body(fileResponses);
+    public List<FileResponse> getStatistics(@RequestParam(required = false) Status status) {
+        return fileService.getFileStatistics(status);
     }
 
     @GetMapping("/{fileId}/statistics")
-    public ResponseEntity<DetailedFileStatistic> getDetailedStatistics(@PathVariable Long fileId) {
-        return ResponseEntity.ok().body(fileService.getDetailedStatistics(fileId));
+    public DetailedFileStatistic getDetailedStatistics(@PathVariable Long fileId) {
+        return fileService.getDetailedStatistics(fileId);
     }
 }
