@@ -80,7 +80,7 @@ public class FileService {
             fileStatistic.setErrorProcessedLinesCount(fileProcessingErrorRepository.countByUploadedFileId(uploadedFile.getId()));
 
             fileResponse.setStatistic(fileStatistic);
-            fileResponse.setHashCode(Integer.valueOf(uploadedFile.getHash()));
+            fileResponse.setHashCode(uploadedFile.getHash().hashCode());
 
             fileResponses.add(fileResponse);
         }
