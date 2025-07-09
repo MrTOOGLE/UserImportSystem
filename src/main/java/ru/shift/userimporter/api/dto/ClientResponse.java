@@ -5,17 +5,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientResponse {
-    private Long phone;
+    private String phone;
     private String name;
     private String lastName;
     private String middleName;
     private String email;
-    private String birthDate;
-    private String creationTime;
-    private String updateTime;
+    private LocalDate birthDate;
+    private ZonedDateTime creationTime;
+    private ZonedDateTime updateTime;
 }

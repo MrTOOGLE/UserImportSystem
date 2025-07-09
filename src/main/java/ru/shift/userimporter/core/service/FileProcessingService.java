@@ -17,6 +17,7 @@ public class FileProcessingService {
     private final FileProcessingErrorRepository errorRepository;
     private final UploadedFileRepository uploadedFileRepository;
     private final UserFileParser userFileParser;
+    private final UserValidator userValidator;
 
     @Async
     public void processFile(UploadedFile uploadedFile) {
@@ -30,9 +31,9 @@ public class FileProcessingService {
                 rowNumber++;
                 try {
                     User user = userFileParser.parseLineToUser(line);
-                    boolean userExists = userService.existsByPhone(user.getPhone());
+                    userValidator.validateUser(user);
+                    boolean userExists = userService.saveOrUpdateUser(user);
 
-                    userService.saveOrUpdateUser(user);
                     if (userExists) {
                         updatedCount++;
                     } else {

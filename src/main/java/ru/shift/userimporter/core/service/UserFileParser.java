@@ -31,24 +31,27 @@ public class UserFileParser {
     }
 
     public ErrorCode determineErrorCode(Exception e) {
-        if (e instanceof DateTimeParseException) {
+        String message = e.getMessage().toLowerCase();
+
+        if (message.contains("дата") || message.contains("birthdate") || message.contains("возраст")) {
             return ErrorCode.INVALID_BIRTHDATE;
         }
-        if (e.getMessage().contains("email")) {
+        if (message.contains("email") || message.contains("почта")) {
             return ErrorCode.INVALID_EMAIL;
         }
-        if (e.getMessage().contains("phone")) {
+        if (message.contains("телефон") || message.contains("phone")) {
             return ErrorCode.INVALID_PHONE;
         }
-        if (e.getMessage().contains("firstName")) {
+        if (message.contains("имя") || message.contains("firstname")) {
             return ErrorCode.INVALID_NAME;
         }
-        if (e.getMessage().contains("lastName")) {
+        if (message.contains("фамилия") || message.contains("lastname")) {
             return ErrorCode.INVALID_LAST_NAME;
         }
-        if (e.getMessage().contains("middleName")) {
+        if (message.contains("отчество") || message.contains("middlename")) {
             return ErrorCode.INVALID_MIDDLE_NAME;
         }
+
         return ErrorCode.INVALID_FORMAT;
     }
 }

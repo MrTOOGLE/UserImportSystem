@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
-import ru.shift.userimporter.api.dto.DetailedFileStatistic;
+import ru.shift.userimporter.core.model.DetailedFileStatistic;
 import ru.shift.userimporter.api.dto.FileResponse;
 import ru.shift.userimporter.api.dto.FileStatistic;
 import ru.shift.userimporter.api.error.BusinessException;
@@ -68,7 +68,7 @@ public class FileService {
     }
 
     public List<FileResponse> getFileStatistics(Status status) {
-        List<UploadedFile> uploadedFiles = (status == null) ? uploadedFileRepository.findAll() : uploadedFileRepository.findByStatus(status);
+        List<UploadedFile> uploadedFiles = uploadedFileRepository.findByStatus(status);
         List<FileResponse> fileResponses = new ArrayList<>();
         for (UploadedFile uploadedFile : uploadedFiles) {
             FileResponse fileResponse = new FileResponse();

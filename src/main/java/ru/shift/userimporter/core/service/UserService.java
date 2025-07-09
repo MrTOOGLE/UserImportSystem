@@ -27,8 +27,14 @@ public class UserService {
         return userRepository.findAll(specification, pageable);
     }
 
-    public User saveOrUpdateUser(User user) {
-        return userRepository.save(user);
+    public boolean saveOrUpdateUser(User user) {
+        boolean existed = userRepository.findByPhone(user.getPhone()).isPresent();
+
+        if (existed) {
+            user.setId(userRepository.findByPhone(user.getPhone()).get().getId());
+        }
+        userRepository.save(user);
+        return !existed;
     }
 
     public boolean existsByPhone(String phone) {

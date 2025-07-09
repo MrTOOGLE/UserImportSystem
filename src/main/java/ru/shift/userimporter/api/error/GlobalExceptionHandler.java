@@ -3,15 +3,14 @@ package ru.shift.userimporter.api.error;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.Map;
+import ru.shift.userimporter.api.dto.ErrorResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<Map<String, String>> handleBusinessException(BusinessException e) {
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException e) {
         return ResponseEntity.status(e.getErrorType().getHttpStatus())
-                .body(Map.of("message", e.getMessage()));
+                .body(new ErrorResponse(e.getMessage()));
     }
 }
