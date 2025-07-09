@@ -14,5 +14,5 @@ public class FileResponse {
     private String fileId;
     private Status status;
     private FileStatistic statistic;
-    private Integer hashCode;
+    private int hashCode;
 }

@@ -2,7 +2,6 @@ package ru.shift.userimporter.api.controller;
 
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,9 +30,6 @@ public class ClientController {
             @RequestParam @Min(1) int limit,
             @RequestParam @Min(0) int offset)
     {
-        if (offset % limit != 0) {
-            throw new IllegalArgumentException("Offset должен быть кратен limit и оба должны быть больше нуля");
-        }
         List<User> users = userService.getUsers(phone, name, lastName, email, limit, offset).getContent();
         List<ClientResponse> responses = new ArrayList<>();
         for (User user : users) {

@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.shift.userimporter.api.dto.DetailedFileStatistic;
 import ru.shift.userimporter.api.dto.FileResponse;
 import ru.shift.userimporter.api.dto.FileStatistic;
+import ru.shift.userimporter.api.error.BusinessException;
+import ru.shift.userimporter.api.error.ErrorType;
 import ru.shift.userimporter.core.model.FileProcessingError;
 import ru.shift.userimporter.core.model.Status;
 import ru.shift.userimporter.core.model.UploadedFile;
@@ -35,24 +37,24 @@ public class FileService {
         this.fileProcessingErrorRepository = fileProcessingErrorRepository;
     }
 
-    public Long uploadFile(MultipartFile file) throws IOException {
+    public Long uploadFile(MultipartFile file) {
         if (file.isEmpty() || file.getOriginalFilename() == null) {
-            throw new IllegalArgumentException("Пустой файл");
+            throw new BusinessException(ErrorType.INVALID_FILE, "Пустой файл");
         }
 
         String hash = calculateHash(file);
 
         if (uploadedFileRepository.findByHash(hash).isPresent()) {
-            throw new IllegalArgumentException("Файл уже есть");
+            throw new BusinessException(ErrorType.FILE_ALREADY_EXISTS, "Файл уже есть");
         }
 
-        Files.createDirectories(Path.of(uploadPath));
         // Для исключения ошибки, когда файлы ↓ называются одинаково
         String filePath = uploadPath + "/" + UUID.randomUUID() + file.getOriginalFilename();
         try {
+            Files.createDirectories(Path.of(uploadPath));
             Files.write(Path.of(filePath), file.getBytes());
         } catch (IOException e) {
-            throw new IOException("Ошибка при сохранении файла: " + e.getMessage(), e);
+            throw new BusinessException(ErrorType.INVALID_FILE, "Ошибка при сохранении файла");
         }
 
         UploadedFile uploadedFile = new UploadedFile();
@@ -96,9 +98,9 @@ public class FileService {
     }
 
     public void startProcessing(Long fileId) {
-        UploadedFile uploadedFile = uploadedFileRepository.findById(fileId).orElseThrow(() -> new IllegalArgumentException("Файл не найден"));
+        UploadedFile uploadedFile = uploadedFileRepository.findById(fileId).orElseThrow(() -> new BusinessException(ErrorType.FILE_NOT_FOUND, "Файл не найден"));
         if (uploadedFile.getStatus() != Status.NEW) {
-            throw new IllegalArgumentException("Файл не новый, уже обрабатывался/обрабатывается");
+            throw new BusinessException(ErrorType.INVALID_FILE, "Файл не новый, уже обрабатывался/обрабатывается");
         }
 
         uploadedFile.setStatus(Status.IN_PROGRESS);
@@ -111,7 +113,7 @@ public class FileService {
         try {
             return DigestUtils.sha256Hex(file.getInputStream());
         } catch (IOException e) {
-            throw new RuntimeException("Проблема с файлом: " + e.getMessage(), e);
+            throw new BusinessException(ErrorType.INVALID_FILE, "роблема с файлом");
         }
     }
 }
