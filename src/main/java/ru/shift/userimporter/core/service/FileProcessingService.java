@@ -35,9 +35,9 @@ public class FileProcessingService {
                     boolean userExists = userService.saveOrUpdateUser(user);
 
                     if (userExists) {
-                        updatedCount++;
-                    } else {
                         insertedCount++;
+                    } else {
+                        updatedCount++;
                     }
 
                 } catch (Exception e) {

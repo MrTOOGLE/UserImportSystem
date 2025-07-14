@@ -100,7 +100,7 @@ public class FileService {
     public void startProcessing(Long fileId) {
         UploadedFile uploadedFile = uploadedFileRepository.findById(fileId).orElseThrow(() -> new BusinessException(ErrorType.FILE_NOT_FOUND, "Файл не найден"));
         if (uploadedFile.getStatus() != Status.NEW) {
-            throw new BusinessException(ErrorType.INVALID_FILE, "Файл не новый, уже обрабатывался/обрабатывается");
+            throw new BusinessException(ErrorType.INVALID_FILE, "Файл не новый, уже обрабатывался или обрабатывается");
         }
 
         uploadedFile.setStatus(Status.IN_PROGRESS);
@@ -111,7 +111,7 @@ public class FileService {
 
     private String calculateHash(MultipartFile file) {
         try {
-            return DigestUtils.sha256Hex(file.getInputStream());
+            return DigestUtils.md5Hex(file.getInputStream());
         } catch (IOException e) {
             throw new BusinessException(ErrorType.INVALID_FILE, "роблема с файлом");
         }

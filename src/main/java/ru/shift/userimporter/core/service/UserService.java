@@ -9,6 +9,8 @@ import ru.shift.userimporter.core.model.User;
 import ru.shift.userimporter.core.repository.UserRepository;
 import ru.shift.userimporter.core.repository.UserSpecifications;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -28,16 +30,15 @@ public class UserService {
     }
 
     public boolean saveOrUpdateUser(User user) {
-        boolean existed = userRepository.findByPhone(user.getPhone()).isPresent();
+        Optional<User> existingUser = userRepository.findByPhone(user.getPhone());
 
-        if (existed) {
-            user.setId(userRepository.findByPhone(user.getPhone()).get().getId());
+        if (existingUser.isPresent()) {
+            user.setId(existingUser.get().getId());
+            userRepository.save(user);
+            return false;
+        } else {
+            userRepository.save(user);
+            return true;
         }
-        userRepository.save(user);
-        return !existed;
-    }
-
-    public boolean existsByPhone(String phone) {
-        return userRepository.findByPhone(phone).isPresent();
     }
 }

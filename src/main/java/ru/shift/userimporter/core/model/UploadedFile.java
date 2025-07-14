@@ -25,7 +25,6 @@ public class UploadedFile {
     private String storagePath;
 
     @Enumerated(EnumType.STRING)
-    @Size(max = 50)
     @Column(length = 50, nullable = false)
     private Status status = Status.NEW;
 

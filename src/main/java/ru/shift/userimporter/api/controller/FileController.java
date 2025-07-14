@@ -21,15 +21,16 @@ public class FileController {
     private final FileService fileService;
 
     @PostMapping
-    public ResponseEntity<FileUploadResponse> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+    @ResponseStatus(HttpStatus.CREATED)
+    public FileUploadResponse uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         Long fileId = fileService.uploadFile(file);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new FileUploadResponse(fileId.toString()));
+        return new FileUploadResponse(fileId.toString());
     }
 
     @PostMapping("/{fileId}/processing")
-    public ResponseEntity<Void> processFile(@PathVariable Long fileId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void processFile(@PathVariable Long fileId) {
         fileService.startProcessing(fileId);
-        return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
     @GetMapping("/statistics")
